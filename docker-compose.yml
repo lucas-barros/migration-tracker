@@ -1,0 +1,61 @@
+services:
+  node:
+    networks:
+      - back-tier
+    depends_on:
+      - db
+    build:
+      context: ./server
+      dockerfile: ./Dockerfile
+    volumes:
+      - ./server:/home/node/app
+      - /home/node/app/node_modules
+    ports:
+      - ${SERVER_LOCAL_PORT}:${SERVER_PORT}
+    develop:
+      watch:
+        - action: sync
+          path: ./src
+          target: /home/node/app/src
+        - action: rebuild
+          path: ./package.json
+          target: /home/node/app/package.json
+    env_file: .env
+    environment:
+      - DB_HOST=db
+  db:
+    image: postgis/postgis:16-3.4
+    restart: always
+    networks:
+      - back-tier
+    user: postgres
+    ports:
+      - ${DB_LOCAL_PORT}:${DB_PORT}
+    volumes:
+      - db:/var/lib/postgres
+    environment:
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_NAME}
+    healthcheck:
+      test: ["CMD", "pg_isready"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  dbViewer:
+    image: dpage/pgadmin4:latest
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=${PGADMIN_EMAIL}
+      - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_PASSWORD}
+    ports:
+      - "16543:80"
+    depends_on:
+      - db
+    networks:
+      - back-tier
+    
+networks:
+  back-tier:
+    driver: bridge
+volumes:
+  db:
