@@ -22,10 +22,8 @@
     "@types/geojson": "^7946.0.14",
     "@types/jest": "^29.5.12",
     "@types/node": "^20.12.12",
-    "@types/shell-quote": "^1.7.5",
     "@types/supertest": "^2.0.16",
     "@types/swagger-ui-express": "^4.1.6",
-    "@types/uuid": "^9.0.7",
     "@typescript-eslint/eslint-plugin": "^7.12.0",
     "eslint": "^8.57.0",
     "eslint-config-prettier": "^9.1.0",
@@ -39,21 +37,16 @@
     "typescript-eslint": "^7.12.0"
   },
   "dependencies": {
-    "@commander-js/extra-typings": "^11.1.0",
     "@types/yamljs": "^0.2.34",
-    "commander": "^11.1.0",
     "express": "^4.18.2",
     "geojson": "^0.5.0",
     "pg": "^8.11.5",
     "reflect-metadata": "^0.2.2",
-    "shell-quote": "^1.8.1",
-    "simpler-emitter": "^0.1.0",
     "sqlite3": "^5.1.7",
     "swagger-ui-express": "^5.0.0",
     "ts-results-es": "^4.1.0-alpha.1",
     "typeorm": "^0.3.20",
     "typeorm-extension": "^3.5.1",
-    "uuid": "^9.0.1",
     "yamljs": "^0.3.0"
   }
 }

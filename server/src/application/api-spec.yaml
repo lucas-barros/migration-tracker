@@ -1,0 +1,97 @@
+openapi: 3.0.0
+info:
+  title: Migration tracker API
+  version: 1.0.0
+produces:
+  - application/json
+paths:
+  /migration:
+    post:
+      summary:
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                species:
+                  type: string
+                date:
+                  type: string
+                  format: date-time
+                location:
+                  type: string
+      responses:
+        201:
+          description: Migration created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  species:
+                    type: string
+                  date:
+                    type: string
+                    format: date-time
+                  location:
+                    type: string
+    get:
+      summary: Get all migrations
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                    species:
+                      type: string
+                    date:
+                      type: string
+                      format: date-time
+                    location:
+                      type: string
+
+  /migration/{id}:
+    get:
+      summary: Get an migration by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  species:
+                    type: string
+                  date:
+                    type: string
+                    format: date-time
+                  location:
+                    type: string
+
+security:
+  - basicAuth: []
+components:
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
