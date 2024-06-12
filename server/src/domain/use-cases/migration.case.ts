@@ -1,7 +1,7 @@
 import { Err, Ok, Result } from "ts-results-es";
 import { Migration, MigrationJson } from "../entities/migration.entity";
 import { MigrationException } from "../exceptions/migration.exception";
-import { Container } from "../container";
+import { Container } from "../../application/container";
 import { CreateMigrationPayload } from "../../application/dtos/migration.dto";
 
 export interface MigrationUseCase {

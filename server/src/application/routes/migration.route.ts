@@ -1,7 +1,7 @@
 import express from "express";
 
 import { authorizationMiddleware } from "../middlewares/authorization";
-import { Container } from "../../domain/container";
+import { Container } from "../container";
 import { createMigrationController } from "../controllers/migration.controller";
 import { createMigrationUseCase } from "../../domain/use-cases/migration.case";
 import { MigrationParams } from "../dtos/migration.dto";
