@@ -7,12 +7,9 @@ export class User {
   id!: number;
 
   @Column()
-  firstName!: string;
+  name!: string;
 
-  @Column()
-  lastName!: string;
-
-  @Column()
+  @Column({ unique: true })
   email!: string;
 
   @Column()
@@ -25,6 +22,7 @@ export class User {
     type: "geography",
     spatialFeatureType: "Point",
     srid: 4326,
+    nullable: true,
   })
   location!: Point;
 }

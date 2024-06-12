@@ -10,16 +10,14 @@ export default class UserSeeder implements Seeder {
     await repository.insert([
       {
         email: "biologist@mail.com",
-        firstName: "Biologist",
-        lastName: "Zero",
+        name: "Biologist Zero",
         password: "password",
         location: { type: "Point", coordinates: [-8.05, -34.900002] },
         role: Role.Biologist,
       },
       {
         email: "citizen@mail.com",
-        firstName: "Citizen",
-        lastName: "Zero",
+        name: "Citizen Zero",
         password: "password",
         location: { type: "Point", coordinates: [-42.8016, -5.08921] },
         role: Role.Citizen,
