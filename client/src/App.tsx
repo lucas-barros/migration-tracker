@@ -1,10 +1,11 @@
 import React from "react";
 import "./App.css";
 import "@radix-ui/themes/styles.css";
-import { CreateMigration } from "./components/CreateMigration";
+import { RouterProvider } from "react-router-dom";
+import { router } from "./routes";
 
 function App() {
-  return <CreateMigration />;
+  return <RouterProvider router={router} />;
 }
 
 export default App;

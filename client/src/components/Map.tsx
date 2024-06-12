@@ -6,17 +6,17 @@ import { LocationMarker } from "./Location";
 interface Props {
   lat?: number;
   lng?: number;
-  onClick: (event: LeafletMouseEvent) => void;
-  onLocationfound: (event: LocationEvent) => void;
+  onClick?: (event: LeafletMouseEvent) => void;
+  onLocationfound?: (event: LocationEvent) => void;
 }
 
 const Click = ({ onClick, onLocationfound }: Props) => {
   useMapEvents({
     click: (e) => {
-      onClick(e);
+      onClick?.(e);
     },
     locationfound: (location) => {
-      onLocationfound(location);
+      onLocationfound?.(location);
     },
   });
   return <></>;
@@ -25,8 +25,8 @@ const Click = ({ onClick, onLocationfound }: Props) => {
 export const Map = ({
   lat = -2.163106,
   lng = -55.126648,
-  onClick,
-  onLocationfound,
+  onClick = () => {},
+  onLocationfound = () => {},
 }: Props) => {
   return (
     <MapContainer center={[lat, lng]} zoom={13}>
