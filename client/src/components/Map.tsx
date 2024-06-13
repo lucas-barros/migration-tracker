@@ -8,7 +8,7 @@ import {
 } from "react-leaflet";
 import { LocationMarker } from "./Location";
 import { Location } from "../types/location";
-import { Box, Text } from "@radix-ui/themes";
+import { Badge, Box, Text } from "@radix-ui/themes";
 import { Migration } from "../types/migration";
 
 interface Props {
@@ -47,18 +47,31 @@ export const Map = ({
       <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
       <LocationMarker lat={location?.lat} lng={location?.lng} />
       <MapLocation onClick={onClick} onLocationFound={onLocationFound} />
-      {migrations.map((migration) => (
-        <Circle center={migration.location} radius={100}>
-          <Popup>
-            <Box>
-              <Text>Date: {migration.date}</Text>
-            </Box>
-            <Box>
-              <Text>Species: {migration.species}</Text>
-            </Box>
-          </Popup>
-        </Circle>
-      ))}
+      {migrations.map((migration) => {
+        const date = new Date(migration.date);
+        const now = new Date();
+        return (
+          <Circle center={migration.location} radius={100}>
+            <Popup>
+              {date < now ? (
+                <Badge color="green" variant="solid">
+                  Completed
+                </Badge>
+              ) : (
+                <Badge color="orange" variant="solid">
+                  in progress
+                </Badge>
+              )}
+              <Box>
+                <Text>Date: {date.toDateString()}</Text>
+              </Box>
+              <Box>
+                <Text>Species: {migration.species}</Text>
+              </Box>
+            </Popup>
+          </Circle>
+        );
+      })}
     </MapContainer>
   );
 };

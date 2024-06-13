@@ -34,6 +34,11 @@ export const useMigrationForm = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["migrations"] });
+      setMigration({
+        ...migration,
+        species: "",
+        date: "",
+      });
     },
   });
 

@@ -1,5 +1,5 @@
-import React from "react";
-import { Box, Grid, Heading } from "@radix-ui/themes";
+import React, { useEffect, useState } from "react";
+import { Box, Callout, Grid, Heading } from "@radix-ui/themes";
 import { Map } from "../components/Map";
 import { useReverseGeocoding } from "../hooks/useReverseGeocoding";
 import { useMigrationForm } from "../hooks/useMigrationForm";
@@ -8,6 +8,7 @@ import { useMigrations } from "../hooks/useMigrations";
 import { Location } from "../types/location";
 
 export const Biologist = () => {
+  const [visible, setVisible] = useState(false);
   const { migration, setMigration, mutation } = useMigrationForm();
   const { reversedLocation } = useReverseGeocoding(migration.location);
   const { data = [] } = useMigrations();
@@ -17,6 +18,16 @@ export const Biologist = () => {
       location,
     }));
   };
+
+  useEffect(() => {
+    if (mutation.isSuccess) {
+      setVisible(true);
+      setTimeout(() => {
+        setVisible(false);
+      }, 3000);
+    }
+  }, [mutation.isSuccess]);
+
   return (
     <Grid columns="2" gap="3" width="auto" height="100vh">
       <Box p="4">
@@ -31,6 +42,13 @@ export const Biologist = () => {
           reversedLocation={reversedLocation}
           mutation={mutation}
         />
+        {visible && (
+          <Box mt="6">
+            <Callout.Root variant="surface">
+              <Callout.Text>Migration Created</Callout.Text>
+            </Callout.Root>
+          </Box>
+        )}
       </Box>
       <Map
         migrations={data}
