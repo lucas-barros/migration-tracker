@@ -6,7 +6,7 @@ export interface Error {
 export interface CreateMigrationPayload {
   species: string;
   date: string;
-  location: string;
+  location: { lat: number; lng: number };
 }
 
 export interface MigrationParams {

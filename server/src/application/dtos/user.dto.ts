@@ -9,7 +9,7 @@ export interface SignUpPayload {
   email: string;
   password: string;
   role: Role;
-  location: string;
+  location: { lat: number; lng: number };
 }
 
 export interface SignInPayload {

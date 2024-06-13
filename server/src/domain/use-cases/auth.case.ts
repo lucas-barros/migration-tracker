@@ -38,10 +38,14 @@ export const createAuthUseCase = ({
         role,
       });
 
-      const result = await userRepository.save(user.toPersistence());
+      const result = await userRepository.saveOne(user.toPersistence());
+
+      if (result.isErr()) {
+        return Err(result.error);
+      }
 
       const tokenResult = authTokenService.sign({
-        userId: result.id,
+        userId: result.value.id,
       });
 
       if (tokenResult.isErr()) {
@@ -60,7 +64,7 @@ export const createAuthUseCase = ({
       if (!repositoryResult) {
         return Err("No user found for this email");
       }
-      const user = new User(repositoryResult);
+      const user = User.fromPersistence(repositoryResult);
       const isValid = await hashService.compare(password, user.getPassword());
 
       if (!isValid) {

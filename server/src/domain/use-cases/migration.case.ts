@@ -1,5 +1,5 @@
 import { Err, Ok, Result } from "ts-results-es";
-import { Migration, MigrationJson } from "../entities/migration.entity";
+import { Migration } from "../entities/migration.entity";
 import { MigrationException } from "../exceptions/migration.exception";
 import { Container } from "../../application/container";
 import { CreateMigrationPayload } from "../../application/dtos/migration.dto";
@@ -7,9 +7,9 @@ import { CreateMigrationPayload } from "../../application/dtos/migration.dto";
 export interface MigrationUseCase {
   create: (
     payload: CreateMigrationPayload,
-  ) => Promise<Result<MigrationJson, MigrationException>>;
-  getById: (id: number) => Promise<Result<MigrationJson, MigrationException>>;
-  getAll: () => Promise<Result<MigrationJson[], MigrationException>>;
+  ) => Promise<Result<Migration, MigrationException>>;
+  getById: (id: number) => Promise<Result<Migration, MigrationException>>;
+  getAll: () => Promise<Result<Migration[], MigrationException>>;
 }
 
 export const createMigrationUseCase = ({
@@ -19,9 +19,10 @@ export const createMigrationUseCase = ({
     create: async ({ date, location, species }) => {
       const migration = new Migration({ date, location, species });
 
-      const result = await migrationRepository.save(migration.toJson());
+      const result = await migrationRepository.save(migration.toPersistence());
+      migration.setId(result.id);
 
-      return new Ok(result);
+      return new Ok(migration);
     },
     getById: async (id: number) => {
       if (!id) {
@@ -34,18 +35,17 @@ export const createMigrationUseCase = ({
         return new Err(MigrationException.NotFound);
       }
 
-      const migration = new Migration(migrationModel);
+      const migration = Migration.fromPersistence(migrationModel);
 
-      return new Ok(migration.toJson());
+      return new Ok(migration);
     },
     getAll: async () => {
       const migrationModels = await migrationRepository.findBy({});
       const migrations = [];
 
       for (const migrationModel of migrationModels) {
-        const migration = new Migration(migrationModel);
-
-        migrations.push(migration.toJson());
+        const migration = Migration.fromPersistence(migrationModel);
+        migrations.push(migration);
       }
 
       return new Ok(migrations);

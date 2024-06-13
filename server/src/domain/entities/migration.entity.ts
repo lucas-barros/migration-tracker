@@ -1,10 +1,11 @@
 import { Point } from "geojson";
+import { Migration as MigrationModel } from "../../infrastructure/database/model/Migration";
 
 export interface MigrationJson {
   id?: number;
   species: string;
   date: string;
-  location: Point;
+  location: { lat: number; lng: number };
 }
 
 export class Migration {
@@ -22,18 +23,19 @@ export class Migration {
     id?: number;
     species: string;
     date: Date | string;
-    location: Point | string;
+    location: { lat: number; lng: number };
   }) {
     this.id = id;
     this.species = species;
     this.date = new Date(date);
-    this.location =
-      typeof location === "string"
-        ? {
-            type: "Point",
-            coordinates: location.split(",").map(Number),
-          }
-        : location;
+    this.location = {
+      type: "Point",
+      coordinates: [location.lat, location.lng],
+    };
+  }
+
+  setId(id: number) {
+    this.id = id;
   }
 
   getId(): number | undefined {
@@ -49,11 +51,26 @@ export class Migration {
   }
 
   toJson(): MigrationJson {
+    const [lat, lng] = this.location.coordinates;
+    return {
+      id: this.id,
+      species: this.species,
+      date: this.date.toISOString(),
+      location: { lat, lng },
+    };
+  }
+
+  toPersistence() {
     return {
       id: this.id,
       species: this.species,
       date: this.date.toISOString(),
       location: this.location,
     };
+  }
+
+  static fromPersistence(model: MigrationModel) {
+    const [lat, lng] = model.location.coordinates;
+    return new Migration({ ...model, location: { lat, lng } });
   }
 }

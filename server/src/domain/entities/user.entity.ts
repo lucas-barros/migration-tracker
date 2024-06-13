@@ -1,4 +1,5 @@
 import { Point } from "geojson";
+import { User as UserModel } from "../../infrastructure/database/model/User";
 
 export enum Role {
   Citizen = "Citizen",
@@ -34,21 +35,26 @@ export class User {
     name: string;
     email: string;
     password: string;
-    location: Point | string;
-    role: string;
+    location: { lat: number; lng: number };
+    role?: string;
   }) {
     this.id = id;
     this.email = email;
     this.name = name;
     this.password = password;
-    this.role = role === Role.Biologist ? Role.Biologist : Role.Citizen;
-    this.location =
-      typeof location === "string"
-        ? {
-            type: "Point",
-            coordinates: location.split(",").map(Number),
-          }
-        : location;
+    this.role = this.assignRole(email, role);
+    this.location = {
+      type: "Point",
+      coordinates: [location.lat, location.lng],
+    };
+  }
+
+  assignRole(email: string, role?: string): Role {
+    if (role) {
+      return role === Role.Biologist ? Role.Biologist : Role.Citizen;
+    }
+
+    return email.endsWith("@biology.com") ? Role.Biologist : Role.Citizen;
   }
 
   getEmail(): string {
@@ -93,5 +99,10 @@ export class User {
       role: this.role,
       location: this.location,
     };
+  }
+
+  static fromPersistence(model: UserModel) {
+    const [lat, lng] = model.location.coordinates;
+    return new User({ ...model, location: { lat, lng } });
   }
 }

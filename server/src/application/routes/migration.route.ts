@@ -11,11 +11,8 @@ export const router = (container: Container) => {
   const router = express.Router();
   const useCase = createMigrationUseCase(container);
   const migrationController = createMigrationController(useCase);
-  const authentication = createAuthenticationMiddleware(
-    container.userRepository,
-  );
 
-  router.use(authentication.basicAuthMiddleware);
+  router.use(createAuthenticationMiddleware(container));
   router.post(
     "/",
     authorizationMiddleware.canCreateMigration,

@@ -31,7 +31,7 @@ export const createMigrationController = (
       const result = await useCase.create({ date, location, species });
 
       if (result.isOk()) {
-        res.status(201).send(result.value);
+        res.status(201).send(result.value.toJson());
         return;
       }
       if (result.error === MigrationException.InvalidData) {
@@ -45,7 +45,7 @@ export const createMigrationController = (
       const result = await useCase.getById(migrationId);
 
       if (result.isOk()) {
-        res.status(200).send(result.value);
+        res.status(200).send(result.value.toJson());
         return;
       }
       if (result.error === MigrationException.NotFound) {
@@ -62,7 +62,9 @@ export const createMigrationController = (
       const result = await useCase.getAll();
 
       if (result.isOk()) {
-        res.status(200).send(result.value);
+        res
+          .status(200)
+          .send(result.value.map((migration) => migration.toJson()));
         return;
       }
 
