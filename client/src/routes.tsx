@@ -2,12 +2,13 @@ import React from "react";
 import { createBrowserRouter } from "react-router-dom";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { AuthPage } from "./pages/Auth";
-import { CreateMigration } from "./components/CreateMigration";
+import { Biologist } from "./pages/Biologist";
+import { Citizen } from "./pages/Citizen";
 
 export const routes = {
   root: "/",
   signIn: "/sign-in",
-  user: "/user",
+  citizen: "/citizen",
   biologist: "/biologist",
 };
 
@@ -21,10 +22,10 @@ export const router = createBrowserRouter([
     Component: AuthPage,
   },
   {
-    path: routes.user,
+    path: routes.citizen,
     element: (
       <ProtectedRoute>
-        <></>
+        <Citizen />
       </ProtectedRoute>
     ),
   },
@@ -32,7 +33,7 @@ export const router = createBrowserRouter([
     path: routes.biologist,
     element: (
       <ProtectedRoute>
-        <CreateMigration />
+        <Biologist />
       </ProtectedRoute>
     ),
   },

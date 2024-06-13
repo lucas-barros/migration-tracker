@@ -1,38 +1,64 @@
 import React from "react";
-import { LeafletMouseEvent, LocationEvent } from "leaflet";
-import { MapContainer, TileLayer, useMapEvents } from "react-leaflet";
+import {
+  MapContainer,
+  Circle,
+  Popup,
+  TileLayer,
+  useMapEvents,
+} from "react-leaflet";
 import { LocationMarker } from "./Location";
+import { Location } from "../types/location";
+import { Box, Text } from "@radix-ui/themes";
+import { Migration } from "../types/migration";
 
 interface Props {
-  lat?: number;
-  lng?: number;
-  onClick?: (event: LeafletMouseEvent) => void;
-  onLocationfound?: (event: LocationEvent) => void;
+  location: Location | undefined;
+  migrations: Migration[];
+  onClick?: (location: Location) => void;
+  onLocationFound?: (location: Location) => void;
 }
 
-const Click = ({ onClick, onLocationfound }: Props) => {
+const MapLocation = ({
+  onClick,
+  onLocationFound,
+}: Pick<Props, "onClick" | "onLocationFound">) => {
   useMapEvents({
-    click: (e) => {
-      onClick?.(e);
+    click: ({ latlng: { lat, lng } }) => {
+      onClick?.({ lat, lng });
     },
-    locationfound: (location) => {
-      onLocationfound?.(location);
+    locationfound: ({ latlng: { lat, lng } }) => {
+      onLocationFound?.({ lat, lng });
     },
   });
   return <></>;
 };
 
 export const Map = ({
-  lat = -2.163106,
-  lng = -55.126648,
+  migrations,
+  location = { lat: -8.05, lng: -34.900002 },
   onClick = () => {},
-  onLocationfound = () => {},
+  onLocationFound = () => {},
 }: Props) => {
   return (
-    <MapContainer center={[lat, lng]} zoom={13}>
+    <MapContainer
+      center={location ? [location.lat, location.lng] : undefined}
+      zoom={13}
+    >
       <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-      <LocationMarker lat={lat} lng={lng} />
-      <Click onClick={onClick} onLocationfound={onLocationfound} />
+      <LocationMarker lat={location?.lat} lng={location?.lng} />
+      <MapLocation onClick={onClick} onLocationFound={onLocationFound} />
+      {migrations.map((migration) => (
+        <Circle center={migration.location} radius={100}>
+          <Popup>
+            <Box>
+              <Text>Date: {migration.date}</Text>
+            </Box>
+            <Box>
+              <Text>Species: {migration.species}</Text>
+            </Box>
+          </Popup>
+        </Circle>
+      ))}
     </MapContainer>
   );
 };

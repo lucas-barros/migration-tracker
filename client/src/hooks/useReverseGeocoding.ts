@@ -17,43 +17,46 @@ export const useReverseGeocoding = ({
 }: {
   lat?: number;
   lng?: number;
-}) => {
-  const [location, setLocation] = useState<string>("");
+} = {}) => {
+  const [reversedLocation, setReversedLocation] = useState<string>("");
   const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
-    if (lat && lng) {
-      const fetchLocationData = async () => {
-        try {
-          const response = await fetch(
-            `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`,
-            {
-              headers: {
-                "User-Agent": `${appName}v${appVersion}`,
-              },
-            },
-          );
-          if (!response.ok) {
-            throw new Error("Failed reverse geocoding");
-          }
-          const {
-            address: {
-              city = "",
-              country = "",
-              house_number = "",
-              road = "",
-              state = "",
-            },
-          }: Response = await response.json();
-          setLocation(`${house_number} ${road}, ${city}, ${state}. ${country}`);
-        } catch (error) {
-          setError(error as Error);
-        }
-      };
-
-      fetchLocationData();
+    if (!lat || !lng) {
+      return;
     }
+    const fetchLocationData = async () => {
+      try {
+        const response = await fetch(
+          `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`,
+          {
+            headers: {
+              "User-Agent": `${appName}v${appVersion}`,
+            },
+          },
+        );
+        if (!response.ok) {
+          throw new Error("Failed reverse geocoding");
+        }
+        const {
+          address: {
+            city = "",
+            country = "",
+            house_number = "",
+            road = "",
+            state = "",
+          },
+        }: Response = await response.json();
+        setReversedLocation(
+          `${house_number} ${road}, ${city}, ${state}. ${country}`,
+        );
+      } catch (error) {
+        setError(error as Error);
+      }
+    };
+
+    fetchLocationData();
   }, [lat, lng]);
 
-  return { location, error };
+  return { reversedLocation, error };
 };

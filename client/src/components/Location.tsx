@@ -3,8 +3,8 @@ import { useEffect } from "react";
 import { Marker, useMap } from "react-leaflet";
 
 interface Props {
-  lat: number;
-  lng: number;
+  lat?: number;
+  lng?: number;
 }
 
 export const LocationMarker = ({ lat, lng }: Props) => {
@@ -15,7 +15,7 @@ export const LocationMarker = ({ lat, lng }: Props) => {
   }, [map]);
 
   useEffect(() => {
-    if (location) {
+    if (lat && lng) {
       map.flyTo({ lat, lng }, map.getZoom());
     }
   }, [map, lat, lng]);
