@@ -35,7 +35,7 @@ export const createMigrationController = (
         return;
       }
       if (result.error === MigrationException.InvalidData) {
-        res.status(400).send({ error: result.error });
+        res.status(400).send({ error: "Invalid form data" });
         return;
       }
       res.status(500).send({ error: INTERNAL_ERROR });

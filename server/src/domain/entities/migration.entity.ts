@@ -30,7 +30,7 @@ export class Migration {
     this.date = new Date(date);
     this.location = {
       type: "Point",
-      coordinates: [location.lat, location.lng],
+      coordinates: [location?.lat, location?.lng],
     };
   }
 

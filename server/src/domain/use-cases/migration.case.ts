@@ -17,6 +17,9 @@ export const createMigrationUseCase = ({
 }: Container): MigrationUseCase => {
   return {
     create: async ({ date, location, species }) => {
+      if (!date || !location || !species) {
+        return Err(MigrationException.InvalidData);
+      }
       const migration = new Migration({ date, location, species });
 
       const result = await migrationRepository.save(migration.toPersistence());
