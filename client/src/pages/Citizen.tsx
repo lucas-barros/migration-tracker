@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import {
   Box,
   Button,
+  Callout,
   Grid,
   Heading,
   ScrollArea,
@@ -30,36 +31,44 @@ export const Citizen = () => {
           scrollbars="vertical"
           style={{ height: "400px", borderRadius: "7px" }}
         >
-          <Table.Root variant="surface">
-            <Table.Header>
-              <Table.Row>
-                <Table.ColumnHeaderCell>Species</Table.ColumnHeaderCell>
-                <Table.ColumnHeaderCell>Date</Table.ColumnHeaderCell>
-                <Table.ColumnHeaderCell>Location</Table.ColumnHeaderCell>
-              </Table.Row>
-            </Table.Header>
-
-            <Table.Body>
-              {data.map((migration) => (
-                <Table.Row key={migration.id}>
-                  <Table.Cell>{migration.species}</Table.Cell>
-                  <Table.Cell>
-                    {new Date(migration.date).toDateString()}
-                  </Table.Cell>
-                  <Table.Cell>
-                    <Button
-                      variant="surface"
-                      onClick={() => {
-                        setLocation(migration.location);
-                      }}
-                    >
-                      Go to location
-                    </Button>
-                  </Table.Cell>
+          {data?.length > 0 ? (
+            <Table.Root variant="surface">
+              <Table.Header>
+                <Table.Row>
+                  <Table.ColumnHeaderCell>Species</Table.ColumnHeaderCell>
+                  <Table.ColumnHeaderCell>Date</Table.ColumnHeaderCell>
+                  <Table.ColumnHeaderCell>Location</Table.ColumnHeaderCell>
                 </Table.Row>
-              ))}
-            </Table.Body>
-          </Table.Root>
+              </Table.Header>
+
+              <Table.Body>
+                {data.map((migration) => (
+                  <Table.Row key={migration.id}>
+                    <Table.Cell>{migration.species}</Table.Cell>
+                    <Table.Cell>
+                      {new Date(migration.date).toDateString()}
+                    </Table.Cell>
+                    <Table.Cell>
+                      <Button
+                        variant="surface"
+                        onClick={() => {
+                          setLocation(migration.location);
+                        }}
+                      >
+                        Go to location
+                      </Button>
+                    </Table.Cell>
+                  </Table.Row>
+                ))}
+              </Table.Body>
+            </Table.Root>
+          ) : (
+            <Box>
+              <Callout.Root variant="surface">
+                <Callout.Text>There are no migrations yet.</Callout.Text>
+              </Callout.Root>
+            </Box>
+          )}
         </ScrollArea>
       </Box>
       <Map
