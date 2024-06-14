@@ -45,7 +45,7 @@ export class User {
     this.role = this.assignRole(email, role);
     this.location = {
       type: "Point",
-      coordinates: [location.lat, location.lng],
+      coordinates: [location?.lat, location?.lng],
     };
   }
 

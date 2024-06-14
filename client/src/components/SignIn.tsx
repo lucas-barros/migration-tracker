@@ -1,18 +1,18 @@
 import React from "react";
 import { Text, Box, Button, Flex, TextField, Skeleton } from "@radix-ui/themes";
 import * as RadixForm from "@radix-ui/react-form";
-import { Form, SetForm } from "../hooks/useAuthForm";
+import { AuthForm, AuthFormMutation, SetForm } from "../hooks/useAuthForm";
 
 interface Props {
-  form: Form;
+  form: AuthForm;
   setForm: SetForm;
-  onSubmit: () => void;
+  mutation: AuthFormMutation;
 }
 
-export const SignIn = ({ form, setForm, onSubmit }: Props) => {
+export const SignIn = ({ form, setForm, mutation }: Props) => {
   const submit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    onSubmit();
+    mutation.mutate(form);
   };
 
   return (
@@ -20,9 +20,9 @@ export const SignIn = ({ form, setForm, onSubmit }: Props) => {
       <Box mb="5">
         <Flex direction="column">
           <Text as="label" size="2" weight="medium" mb="2" htmlFor="email">
-            <Skeleton loading={form.isLoading}>Email address</Skeleton>
+            <Skeleton loading={mutation.isPending}>Email address</Skeleton>
           </Text>
-          <Skeleton loading={form.isLoading}>
+          <Skeleton loading={mutation.isPending}>
             <RadixForm.Field name="email">
               <RadixForm.Control asChild required>
                 <TextField.Root
@@ -30,11 +30,11 @@ export const SignIn = ({ form, setForm, onSubmit }: Props) => {
                   type="email"
                   variant="classic"
                   placeholder="Enter your email"
-                  value={form.data.email}
+                  value={form.email}
                   onChange={(e) =>
                     setForm((state) => ({
                       ...state,
-                      data: { ...state.data, email: e.target.value },
+                      email: e.target.value,
                     }))
                   }
                 />
@@ -57,9 +57,9 @@ export const SignIn = ({ form, setForm, onSubmit }: Props) => {
       <Box mb="5" position="relative">
         <Flex direction="column">
           <Text as="label" size="2" weight="medium" mb="2" htmlFor="password">
-            <Skeleton loading={form.isLoading}>Password</Skeleton>
+            <Skeleton loading={mutation.isPending}>Password</Skeleton>
           </Text>
-          <Skeleton loading={form.isLoading}>
+          <Skeleton loading={mutation.isPending}>
             <RadixForm.Field name="password">
               <RadixForm.Control asChild required>
                 <TextField.Root
@@ -67,11 +67,11 @@ export const SignIn = ({ form, setForm, onSubmit }: Props) => {
                   variant="classic"
                   type="password"
                   placeholder="Enter your password"
-                  value={form.data.password}
+                  value={form.password}
                   onChange={(e) =>
                     setForm((state) => ({
                       ...state,
-                      data: { ...state.data, password: e.target.value },
+                      password: e.target.value,
                     }))
                   }
                 />
@@ -87,22 +87,22 @@ export const SignIn = ({ form, setForm, onSubmit }: Props) => {
       </Box>
 
       <Box mb="5">
-        {form.error && (
+        {mutation.isError && (
           <Text color="red" size="1">
-            {form.error}
+            {mutation.error.response?.data.error}
           </Text>
         )}
       </Box>
 
-      <Box mt="6">
-        <Skeleton loading={form.isLoading}>
+      <Flex mt="6" justify="end" gap="3">
+        <Skeleton loading={mutation.isPending}>
           <RadixForm.Submit asChild>
-            <Button variant="solid" type="submit">
+            <Button variant="surface" type="submit">
               Sign in
             </Button>
           </RadixForm.Submit>
         </Skeleton>
-      </Box>
+      </Flex>
     </RadixForm.Root>
   );
 };

@@ -1,24 +1,33 @@
 import React from "react";
-import { Text, Box, Button, Flex, TextField, Skeleton } from "@radix-ui/themes";
+import {
+  Text,
+  Box,
+  Button,
+  Flex,
+  TextField,
+  Skeleton,
+  Callout,
+  Code,
+} from "@radix-ui/themes";
 import * as RadixForm from "@radix-ui/react-form";
-import { Form, SetForm } from "../hooks/useAuthForm";
+import { AuthForm, AuthFormMutation, SetForm } from "../hooks/useAuthForm";
 
 interface Props {
-  form: Form;
+  form: AuthForm;
   reversedLocation: string;
   setForm: SetForm;
-  onSubmit: () => void;
+  mutation: AuthFormMutation;
 }
 
 export const SignUp = ({
   form,
   reversedLocation,
   setForm,
-  onSubmit,
+  mutation,
 }: Props) => {
   const submit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    onSubmit();
+    mutation.mutate(form);
   };
 
   return (
@@ -26,9 +35,9 @@ export const SignUp = ({
       <Box mb="5">
         <Flex direction="column">
           <Text as="label" size="2" weight="medium" mb="2" htmlFor="name">
-            <Skeleton loading={form.isLoading}>Name</Skeleton>
+            <Skeleton loading={mutation.isPending}>Name</Skeleton>
           </Text>
-          <Skeleton loading={form.isLoading}>
+          <Skeleton loading={mutation.isPending}>
             <RadixForm.Field name="name">
               <RadixForm.Control asChild required>
                 <TextField.Root
@@ -36,11 +45,11 @@ export const SignUp = ({
                   type="text"
                   variant="classic"
                   placeholder="Enter your name"
-                  value={form.data.name}
+                  value={form.name}
                   onChange={(e) =>
                     setForm((state) => ({
                       ...state,
-                      data: { ...state.data, name: e.target.value },
+                      name: e.target.value,
                     }))
                   }
                 />
@@ -57,9 +66,9 @@ export const SignUp = ({
       <Box mb="5">
         <Flex direction="column">
           <Text as="label" size="2" weight="medium" mb="2" htmlFor="email">
-            <Skeleton loading={form.isLoading}>Email address</Skeleton>
+            <Skeleton loading={mutation.isPending}>Email address</Skeleton>
           </Text>
-          <Skeleton loading={form.isLoading}>
+          <Skeleton loading={mutation.isPending}>
             <RadixForm.Field name="email">
               <RadixForm.Control asChild required>
                 <TextField.Root
@@ -67,11 +76,11 @@ export const SignUp = ({
                   type="email"
                   variant="classic"
                   placeholder="Enter your email"
-                  value={form.data.email}
+                  value={form.email}
                   onChange={(e) =>
                     setForm((state) => ({
                       ...state,
-                      data: { ...state.data, email: e.target.value },
+                      email: e.target.value,
                     }))
                   }
                 />
@@ -94,9 +103,9 @@ export const SignUp = ({
       <Box mb="5" position="relative">
         <Flex direction="column">
           <Text as="label" size="2" weight="medium" mb="2" htmlFor="password">
-            <Skeleton loading={form.isLoading}>Password</Skeleton>
+            <Skeleton loading={mutation.isPending}>Password</Skeleton>
           </Text>
-          <Skeleton loading={form.isLoading}>
+          <Skeleton loading={mutation.isPending}>
             <RadixForm.Field name="password">
               <RadixForm.Control asChild required>
                 <TextField.Root
@@ -104,11 +113,11 @@ export const SignUp = ({
                   variant="classic"
                   type="password"
                   placeholder="Enter your password"
-                  value={form.data.password}
+                  value={form.password}
                   onChange={(e) =>
                     setForm((state) => ({
                       ...state,
-                      data: { ...state.data, password: e.target.value },
+                      password: e.target.value,
                     }))
                   }
                 />
@@ -126,10 +135,10 @@ export const SignUp = ({
       <Box mb="5">
         <Flex direction="column">
           <Text as="label" size="2" weight="medium" mb="2" htmlFor="location">
-            <Skeleton loading={form.isLoading}>Location</Skeleton>
+            <Skeleton loading={mutation.isPending}>Location</Skeleton>
           </Text>
-          <Skeleton loading={form.isLoading}>
-            <RadixForm.Field name="password">
+          <Skeleton loading={mutation.isPending}>
+            <RadixForm.Field name="location">
               <RadixForm.Control asChild required>
                 <TextField.Root
                   disabled
@@ -140,27 +149,41 @@ export const SignUp = ({
                   value={reversedLocation}
                 />
               </RadixForm.Control>
+              <RadixForm.Message match="valueMissing">
+                <Text as="span" size="1" mb="2" color="red">
+                  Location is required
+                </Text>
+              </RadixForm.Message>
             </RadixForm.Field>
           </Skeleton>
         </Flex>
       </Box>
 
       <Box mb="5">
-        {form.error && (
+        {mutation.isError && (
           <Text color="red" size="1">
-            {form.error}
+            {mutation.error.response?.data.error}
           </Text>
         )}
       </Box>
 
-      <Box mt="6">
-        <Skeleton loading={form.isLoading}>
+      <Flex mt="6" justify="end" gap="3">
+        <Skeleton loading={mutation.isPending}>
           <RadixForm.Submit asChild>
-            <Button variant="solid" type="submit">
+            <Button variant="surface" type="submit">
               Create an account
             </Button>
           </RadixForm.Submit>
         </Skeleton>
+      </Flex>
+
+      <Box mt="6">
+        <Callout.Root variant="surface">
+          <Callout.Text>
+            Use an email from <Code>biology.com</Code> domain to create a
+            Biologist account
+          </Callout.Text>
+        </Callout.Root>
       </Box>
     </RadixForm.Root>
   );

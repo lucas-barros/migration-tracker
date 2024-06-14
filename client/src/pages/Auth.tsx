@@ -8,15 +8,12 @@ import { useAuthForm } from "../hooks/useAuthForm";
 import { Location } from "../types/location";
 
 export const AuthPage = () => {
-  const { form, setForm, onSignIn, onSignUp } = useAuthForm();
-  const { reversedLocation } = useReverseGeocoding(form.data.location);
+  const { form, setForm, signInMutation, signUpMutation } = useAuthForm();
+  const { reversedLocation } = useReverseGeocoding(form.location);
   const setLocation = (location: Location) => {
     setForm((state) => ({
       ...state,
-      data: {
-        ...state.data,
-        location,
-      },
+      location,
     }));
   };
 
@@ -30,14 +27,14 @@ export const AuthPage = () => {
           </Tabs.List>
           <Box mt="4">
             <Tabs.Content value="signIn">
-              <SignIn form={form} setForm={setForm} onSubmit={onSignIn} />
+              <SignIn form={form} setForm={setForm} mutation={signInMutation} />
             </Tabs.Content>
             <Tabs.Content value="signUp">
               <SignUp
                 form={form}
                 setForm={setForm}
                 reversedLocation={reversedLocation}
-                onSubmit={onSignUp}
+                mutation={signUpMutation}
               />
             </Tabs.Content>
           </Box>
@@ -45,7 +42,7 @@ export const AuthPage = () => {
       </Box>
       <Map
         migrations={[]}
-        location={form.data.location}
+        location={form.location}
         onClick={setLocation}
         onLocationFound={setLocation}
       />

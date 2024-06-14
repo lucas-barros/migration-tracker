@@ -1,5 +1,12 @@
 import React, { useState } from "react";
-import { Box, Button, Grid, Heading, Table } from "@radix-ui/themes";
+import {
+  Box,
+  Button,
+  Grid,
+  Heading,
+  ScrollArea,
+  Table,
+} from "@radix-ui/themes";
 import { Map } from "../components/Map";
 import { useMigrations } from "../hooks/useMigrations";
 import { Location } from "../types/location";
@@ -17,36 +24,43 @@ export const Citizen = () => {
         <Heading as="h2" size="3" mb="4">
           Migrations
         </Heading>
-        <Table.Root variant="surface">
-          <Table.Header>
-            <Table.Row>
-              <Table.ColumnHeaderCell>Species</Table.ColumnHeaderCell>
-              <Table.ColumnHeaderCell>Date</Table.ColumnHeaderCell>
-              <Table.ColumnHeaderCell>Location</Table.ColumnHeaderCell>
-            </Table.Row>
-          </Table.Header>
 
-          <Table.Body>
-            {data.map((migration) => (
+        <ScrollArea
+          type="auto"
+          scrollbars="vertical"
+          style={{ height: "400px", borderRadius: "7px" }}
+        >
+          <Table.Root variant="surface">
+            <Table.Header>
               <Table.Row>
-                <Table.Cell>{migration.species}</Table.Cell>
-                <Table.Cell>
-                  {new Date(migration.date).toDateString()}
-                </Table.Cell>
-                <Table.Cell>
-                  <Button
-                    variant="surface"
-                    onClick={() => {
-                      setLocation(migration.location);
-                    }}
-                  >
-                    Go to location
-                  </Button>
-                </Table.Cell>
+                <Table.ColumnHeaderCell>Species</Table.ColumnHeaderCell>
+                <Table.ColumnHeaderCell>Date</Table.ColumnHeaderCell>
+                <Table.ColumnHeaderCell>Location</Table.ColumnHeaderCell>
               </Table.Row>
-            ))}
-          </Table.Body>
-        </Table.Root>
+            </Table.Header>
+
+            <Table.Body>
+              {data.map((migration) => (
+                <Table.Row key={migration.id}>
+                  <Table.Cell>{migration.species}</Table.Cell>
+                  <Table.Cell>
+                    {new Date(migration.date).toDateString()}
+                  </Table.Cell>
+                  <Table.Cell>
+                    <Button
+                      variant="surface"
+                      onClick={() => {
+                        setLocation(migration.location);
+                      }}
+                    >
+                      Go to location
+                    </Button>
+                  </Table.Cell>
+                </Table.Row>
+              ))}
+            </Table.Body>
+          </Table.Root>
+        </ScrollArea>
       </Box>
       <Map
         migrations={data}

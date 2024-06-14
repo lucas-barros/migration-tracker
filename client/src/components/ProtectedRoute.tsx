@@ -18,7 +18,7 @@ export const ProtectedRoute = ({ children }: PropsWithChildren) => {
 
   return (
     <Box position="relative">
-      <Box position="absolute" left="4" bottom="4">
+      <Box position="absolute" left="4" bottom="4" style={{ zIndex: 10 }}>
         <LogoutPopover onLogOut={onLogOut} />
       </Box>
       {children}

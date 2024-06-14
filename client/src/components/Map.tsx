@@ -51,7 +51,7 @@ export const Map = ({
         const date = new Date(migration.date);
         const now = new Date();
         return (
-          <Circle center={migration.location} radius={100}>
+          <Circle key={migration.id} center={migration.location} radius={100}>
             <Popup>
               {date < now ? (
                 <Badge color="green" variant="solid">

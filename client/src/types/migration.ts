@@ -1,6 +1,7 @@
 import { Location } from "./location";
 
 export interface Migration {
+  id: number;
   species: string;
   date: string;
   location: Location;

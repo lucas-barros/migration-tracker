@@ -3,87 +3,80 @@ import { config } from "../config";
 import { serverApi } from "../api";
 import { useNavigate } from "react-router-dom";
 import { routes } from "../routes";
-import axios from "axios";
-import { Role } from "../types/user";
+import { AxiosError } from "axios";
+import { Role, User } from "../types/user";
+import { useMutation, UseMutationResult } from "@tanstack/react-query";
+import { Location } from "../types/location";
 
-enum FormType {
-  SignIn = "sign-in",
-  SignUp = "sign-up",
+export interface AuthForm {
+  name: string;
+  email: string;
+  password: string;
+  location?: Location;
 }
 
-export interface Form {
-  data: {
-    name: string;
-    email: string;
-    password: string;
-    location?: { lat: number; lng: number };
-  };
-  error: string;
-  isLoading: boolean;
-}
+export type SetForm = Dispatch<SetStateAction<AuthForm>>;
 
-export type SetForm = Dispatch<SetStateAction<Form>>;
+export type AuthFormMutation = UseMutationResult<
+  User,
+  AxiosError<{ error: string }>,
+  AuthForm
+>;
 
-export const useAuthForm = (): {
-  form: Form;
-  setForm: SetForm;
-  onSignIn: () => void;
-  onSignUp: () => void;
-} => {
+export const useAuthForm = () => {
   const navigate = useNavigate();
-  const [form, setForm] = useState<Form>({
-    data: {
-      name: "",
-      email: "",
-      password: "",
-      location: undefined,
-    },
-    error: "",
-    isLoading: false,
+  const [form, setForm] = useState<AuthForm>({
+    name: "",
+    email: "",
+    password: "",
+    location: undefined,
   });
 
-  const makeOnSubmit = (type: FormType) => async () => {
-    try {
-      setForm((state) => ({
-        ...state,
-        error: "",
-        isLoading: true,
-      }));
-      const response = await serverApi.post(
-        `${config.serverHost}/auth/${type}`,
-        form.data,
-      );
-      localStorage.setItem("token", response.data?.token);
+  const onSuccess = (user: User) => {
+    console.log(user);
 
-      if (response.data.role === Role.Biologist) {
-        navigate(routes.biologist);
-      } else {
-        navigate(routes.citizen);
-      }
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        setForm((state) => ({
-          ...state,
-          error: error.response?.data.error,
-        }));
-      } else {
-        setForm((state) => ({
-          ...state,
-          error: "Failed",
-        }));
-      }
-    } finally {
-      setForm((state) => ({
-        ...state,
-        isLoading: false,
-      }));
+    localStorage.setItem("token", user.token);
+    if (user.role === Role.Biologist) {
+      navigate(routes.biologist);
+    } else {
+      navigate(routes.citizen);
     }
   };
+
+  const signInMutation = useMutation<
+    User,
+    AxiosError<{ error: string }>,
+    AuthForm
+  >({
+    mutationFn: async (form) => {
+      const response = await serverApi.post<User>(
+        `${config.serverHost}/auth/sign-in`,
+        form,
+      );
+      return response.data;
+    },
+    onSuccess,
+  });
+
+  const signUpMutation = useMutation<
+    User,
+    AxiosError<{ error: string }>,
+    AuthForm
+  >({
+    mutationFn: async (form) => {
+      const response = await serverApi.post<User>(
+        `${config.serverHost}/auth/sign-up`,
+        form,
+      );
+      return response.data;
+    },
+    onSuccess,
+  });
 
   return {
     form,
     setForm,
-    onSignIn: makeOnSubmit(FormType.SignIn),
-    onSignUp: makeOnSubmit(FormType.SignUp),
+    signInMutation,
+    signUpMutation,
   };
 };
